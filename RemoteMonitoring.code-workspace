@@ -1,0 +1,18 @@
+{
+    "folders": [
+        {
+            "path": "Device"
+        }
+    ],
+    "settings": {
+        "IoTWorkbench.BoardId": "esp32",
+        "IoTWorkbench.DevicePath": "Device",
+        "files.associations": {
+            "string": "cpp"
+        },
+        "IoTWorkbench.iothubConnectionString": "HostName=song-test-hub.azure-devices.net;SharedAccessKeyName=iothubowner;SharedAccessKey=93DvlUijrxI/oRoOlMVkXH9ZWeo2ogOSCs6oTB3ZmlU=",
+        "IoTWorkbench.eventHubConnectionString": "Endpoint=sb://iothub-ns-song-test-1780681-2a7ed62257.servicebus.windows.net/;SharedAccessKeyName=iothubowner;SharedAccessKey=93DvlUijrxI/oRoOlMVkXH9ZWeo2ogOSCs6oTB3ZmlU=",
+        "IoTWorkbench.eventHubConnectionPath": "song-test-hub",
+        "IoTWorkbench.iothubDeviceConnectionString": "HostName=song-test-hub.azure-devices.net;DeviceId=M5STACK;SharedAccessKey=zHfBzPSoXI7bzTqemQeTkHmLQ5pItHXOJIhBFPDpEV0="
+    }
+}
