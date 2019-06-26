@@ -152,19 +152,4 @@ void loop() {
       reset_interval_ms = millis();
     }
   }
-  else
-  {
-    Serial.println("WiFi is lost!");
-    while(!WiFi.reconnect())
-    {
-      delay(500);
-      Serial.print(".");
-    }
-    Esp32MQTTClient_Reset();
-    Esp32MQTTClient_SetOption(OPTION_MINI_SOLUTION_NAME, "RemoteMonitoring");
-    Esp32MQTTClient_Init((const uint8_t*)connectionString, true);
-
-    Esp32MQTTClient_SetDeviceTwinCallback(twinCallback);
-    Esp32MQTTClient_SetDeviceMethodCallback(device_method_callback);
-  }
 }
