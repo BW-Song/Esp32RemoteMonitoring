@@ -136,6 +136,7 @@ void setup() {
   Esp32MQTTClient_SetDeviceTwinCallback(twinCallback);
   Esp32MQTTClient_SetDeviceMethodCallback(device_method_callback);
 
+  bool infoSent=sendDeviceInfo();
   send_interval_ms = millis();
 }
 
