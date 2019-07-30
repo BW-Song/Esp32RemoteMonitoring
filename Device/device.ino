@@ -7,15 +7,6 @@
 
 #define INTERVAL 5000
 
-// Please input the SSID and password of WiFi
-const char* ssid     = "";
-const char* password = "";
-
-/*String containing Hostname, Device Id & Device Key in the format:                         */
-/*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessKey=<device_key>"                */
-/*  "HostName=<host_name>;DeviceId=<device_id>;SharedAccessSignature=<device_sas_token>"    */
-static const char* connectionString = "";
-
 static bool isConnected = false;
 const char *twinProperties="{\"Protocol\": \"MQTT\", \"SupportedMethods\": \"LedColor\", \"Telemetry\": { \"%s\": {\"Interval\": \"%s\",\"MessageTemplate\": \"{\\\"temperature\\\":${temperature},\\\"temperature_unit\\\":\\\"${temperature_unit}\\\", \\\"humidity\\\":${humidity},\\\"humidity_unit\\\":\\\"${humidity_unit}\\\",\\\"pressure\\\":${pressure},\\\"pressure_unit\\\":\\\"${pressure_unit}\\\"}\",\"MessageSchema\": {\"Name\": \"%s\",\"Format\": \"JSON\",\"Fields\": {\"temperature\": \"Double\", \"temperature_unit\": \"Text\",\"humidity\": \"Double\",\"humidity_unit\": \"Text\",\"pressure\": \"Double\",\"pressure_unit\": \"Text\" } } } },\"Type\": \"%s\",\"Firmware\": \"%s\",\"Model\":\"M5STACK\",\"FirmwareUpdateStatus\": \"%s\",\"Location\": \"%s\",\"Latitude\": %f,\"Longitude\": %f}";
 
@@ -42,7 +33,7 @@ static uint64_t reset_interval_ms;
 // Utilities
 
 // Initialize WiFi
-void InitWifi()
+void InitWifi(char* ssid, char* password)
 {
   WiFi.begin(ssid, password);
   while (WiFi.status() != WL_CONNECTED) {
@@ -118,10 +109,20 @@ void setup() {
   Serial.println("ESP32 Device");
   Serial.println("Initializing...");
 
+  Preferences preferences;
+  preferences.begin("Connections");
+  const char *ssid, *password, *connectionString;
+  String s = preferences.getString("WiFi_SSID");
+  String p =preferences.getString("WiFi_Password");
+  String cs = preferences.getString("ConStr");
+  ssid = s.c_str();
+  password = p.c_str();
+  connectionString = cs.c_str();
+
   // Initialize the WiFi module
   Serial.println(" > WiFi");
   isConnected = false;
-  InitWifi();
+  InitWifi(ssid, password);
   if (!isConnected)
   {
     return;
@@ -136,7 +137,6 @@ void setup() {
   Esp32MQTTClient_SetDeviceTwinCallback(twinCallback);
   Esp32MQTTClient_SetDeviceMethodCallback(device_method_callback);
 
-  bool infoSent=sendDeviceInfo();
   send_interval_ms = millis();
 }
 
