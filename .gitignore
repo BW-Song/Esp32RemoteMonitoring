@@ -5,4 +5,4 @@ c_cpp_properties.json
 .build/
 
 # AzureComponent
-.azurecomponent
+.azurecomponent/
