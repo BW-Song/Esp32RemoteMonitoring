@@ -4,6 +4,10 @@
 #include <WiFi.h>
 #include "Esp32MQTTClient.h"
 #include "AzureIotHub.h"
+#include <DNSServer.h>
+#include <WebServer.h>
+#include <WiFiManager.h>
+#include <Preferences.h>
 
 #define INTERVAL 5000
 
@@ -29,8 +33,19 @@ const double deviceLongitude =-3.797997;
 static uint64_t send_interval_ms;
 static uint64_t reset_interval_ms;
 
+WiFiManager wifiManager;
+char* connectionStr;
+Preferences preferences;
+WiFiManagerParameter conStr("ConnectionString","ConnectionString",connectionStr,40);
+
 //////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Utilities
+void saveConfigCallback()
+{
+  preferences.putString("WiFi_SSID",wifiManager.getSSID());
+  preferences.putString("WiFi_Password",wifiManager.getPassword());
+  preferences.putString("ConStr",String(conStr.getValue()));
+}
 
 // Initialize WiFi
 void InitWifi(char* ssid, char* password)
@@ -109,24 +124,15 @@ void setup() {
   Serial.println("ESP32 Device");
   Serial.println("Initializing...");
 
-  Preferences preferences;
   preferences.begin("Connections");
-  const char *ssid, *password, *connectionString;
-  String s = preferences.getString("WiFi_SSID");
-  String p =preferences.getString("WiFi_Password");
-  String cs = preferences.getString("ConStr");
-  ssid = s.c_str();
-  password = p.c_str();
-  connectionString = cs.c_str();
-
-  // Initialize the WiFi module
-  Serial.println(" > WiFi");
-  isConnected = false;
-  InitWifi(ssid, password);
-  if (!isConnected)
-  {
-    return;
-  }
+  // wifiManager.resetSettings();
+  wifiManager.setDebugOutput(false);
+  wifiManager.addParameter(&conStr);
+  wifiManager.setSaveParamsCallback(saveConfigCallback);
+  wifiManager.autoConnect("ESP32-WiFiConfig", "AzureSet");
+  preferences.end();
+  hasWifi = true;
+  const char* connectionString = conStr.getValue();
   randomSeed(analogRead(0));
 
   // Setup the MQTT Client
